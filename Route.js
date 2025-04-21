@@ -1,27 +1,25 @@
 const express = require('express')
-const router = express.Router();
 
-router.post('/signup',(req,res)=>{
-    const {username,email,password,dob} = req.body;
-    if(!username){
-        return res.json({message:"username should be there"})
+const router = express.Router()
+const users = [
+    { username: "alice", age: 25, email: "alice@example.com" },
+    { username: "bob", age: 30, email: "bob@example.com" },
+    { username: "charlie", age: 28, email: "charlie@example.com" },
+  ];
+router.get('/',async(req,res)=>{
+    const {user} = req.query;
+    if(!user || user.trim==""){
+        return res
+      .status(400)
+      .json({ message: "User parameter cannot be empty" });
     }
-    if(!email){
-        return res.json({message:"username should be there"})
-    }if (!password) {
-        return res.status(400).json({ error: "Password cannot be empty" });
+    const foundUser = users.find((u)=>u.username===user)
+    if (foundUser) {
+        return res.status(200).json({ message: "User found", data: foundUser });
+      } else {
+        return res.status(404).json({ message: "User not found" });
       }
-    
-    if (password.length < 8 || password.length > 16) {
-        return res.status(400).json({ error: "Password length should be greater than 8 or less than or equal to 16" });
-      }if (!dob) {
-        return res.status(400).json({ error: "Date of Birth cannot be empty" });
-      }
-      const newUser = { username, email, password, dob };
-      console.log("User created:", newUser);
-      res.status(201).json({ message: "Signup successful", user: newUser });
+
 })
-
-
 
 module.exports = router
